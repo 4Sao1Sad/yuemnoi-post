@@ -1,0 +1,11 @@
+app_name: grpc
+port: 8081
+db:
+  use: postgresql
+  postgres:
+    - enabled: true
+      host: localhost
+      port: "5432"
+      username: youruser
+      password: yourpassword
+      database: yourdbname

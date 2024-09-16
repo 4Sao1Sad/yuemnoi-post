@@ -56,8 +56,11 @@ func ServerInit(db *gorm.DB) error {
 	// register
 	lendingPostRepo := repository.NewLendingPostRepository(db)
 	lendingPostServer := handler.NewLendingPostGRPC(lendingPostRepo)
+	borrowingPostRepo := repository.NewBorrowingPostRepository(db)
+	borrowingPostServer := handler.NewBorrowingPostGRPC(borrowingPostRepo)
 	// put register server here
 	post.RegisterLendingPostServiceServer(grpcServer, lendingPostServer)
+	post.RegisterBorrowingPostServiceServer(grpcServer, borrowingPostServer)
 	err = grpcServer.Serve(listen)
 	if err != nil {
 		return fmt.Errorf("error to serve: %v", err.Error())

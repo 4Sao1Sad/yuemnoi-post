@@ -11,7 +11,7 @@ type LendingPostRepositoryImpl struct {
 
 type LendingPostRepository interface {
 	InsertLendingPost(post model.LendingPost) (*model.LendingPost, error)
-	GetLendingPostById(id uint) (*model.LendingPost, error)
+	GetLendingPostById(id uint64) (*model.LendingPost, error)
 	SearchLendingPost(searchString string) (*[]model.LendingPost, error)
 }
 
@@ -28,7 +28,7 @@ func (r LendingPostRepositoryImpl) InsertLendingPost(post model.LendingPost) (*m
 	return &post, nil
 }
 
-func (r LendingPostRepositoryImpl) GetLendingPostById(id uint) (*model.LendingPost, error) {
+func (r LendingPostRepositoryImpl) GetLendingPostById(id uint64) (*model.LendingPost, error) {
 	var post model.LendingPost
 	err := r.db.First(&post, id).Error
 	if err != nil {
@@ -40,7 +40,7 @@ func (r LendingPostRepositoryImpl) GetLendingPostById(id uint) (*model.LendingPo
 
 func (r LendingPostRepositoryImpl) SearchLendingPost(searchString string) (*[]model.LendingPost, error) {
 	var posts []model.LendingPost
-	err := r.db.Where("item_name LIKE ?", "%"+searchString+"%").Find(&posts).Error
+	err := r.db.Where("item_name ILIKE ?", "%"+searchString+"%").Find(&posts).Error
 	if err != nil {
 		return nil, err
 	}

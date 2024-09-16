@@ -39,3 +39,5 @@ func (g *LendingPostGRPC) CreateLendingPost(ctx context.Context, input *pb.Creat
 
 	return &resp, nil
 }
+
+// func (g *LendingPostGRPC) GetLendingPostById(ctx context.Context, id uint) (*)

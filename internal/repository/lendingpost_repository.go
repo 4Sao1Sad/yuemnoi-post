@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"fmt"
-
 	"github.com/bpremika/post/internal/model"
 	"gorm.io/gorm"
 )
@@ -13,6 +11,8 @@ type LendingPostRepositoryImpl struct {
 
 type LendingPostRepository interface {
 	InsertLendingPost(post model.LendingPost) (*model.LendingPost, error)
+	GetLendingPostById(id uint) (*model.LendingPost, error)
+	SearchLendingPost(searchString string) (*[]model.LendingPost, error)
 }
 
 func NewLendingPostRepository(db *gorm.DB) LendingPostRepository {
@@ -20,13 +20,30 @@ func NewLendingPostRepository(db *gorm.DB) LendingPostRepository {
 }
 
 func (r LendingPostRepositoryImpl) InsertLendingPost(post model.LendingPost) (*model.LendingPost, error) {
-	fmt.Println("repo")
 	err := r.db.Create(&post).Error
-	fmt.Println("1", err)
 	if err != nil {
-		fmt.Println("here")
 		return nil, err
 	}
-	fmt.Println("2", err)
+
 	return &post, nil
+}
+
+func (r LendingPostRepositoryImpl) GetLendingPostById(id uint) (*model.LendingPost, error) {
+	var post model.LendingPost
+	err := r.db.First(&post, id).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &post, nil
+}
+
+func (r LendingPostRepositoryImpl) SearchLendingPost(searchString string) (*[]model.LendingPost, error) {
+	var posts []model.LendingPost
+	err := r.db.Where("item_name LIKE ?", "%"+searchString+"%").Find(&posts).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &posts, nil
 }

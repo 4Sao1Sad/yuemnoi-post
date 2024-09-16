@@ -21,7 +21,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	LendingPostService_CreateLendingPost_FullMethodName = "/LendingPostService/CreateLendingPost"
+	LendingPostService_CreateLendingPost_FullMethodName    = "/LendingPostService/CreateLendingPost"
+	LendingPostService_GetLendingPostDetail_FullMethodName = "/LendingPostService/GetLendingPostDetail"
 )
 
 // LendingPostServiceClient is the client API for LendingPostService service.
@@ -30,6 +31,7 @@ const (
 type LendingPostServiceClient interface {
 	// RPC method to create a new LendingPost
 	CreateLendingPost(ctx context.Context, in *CreateLendingPostRequest, opts ...grpc.CallOption) (*CreateLendingPostResponse, error)
+	GetLendingPostDetail(ctx context.Context, in *GetLendingPostDetailRequest, opts ...grpc.CallOption) (*CreateLendingPostResponse, error)
 }
 
 type lendingPostServiceClient struct {
@@ -50,12 +52,23 @@ func (c *lendingPostServiceClient) CreateLendingPost(ctx context.Context, in *Cr
 	return out, nil
 }
 
+func (c *lendingPostServiceClient) GetLendingPostDetail(ctx context.Context, in *GetLendingPostDetailRequest, opts ...grpc.CallOption) (*CreateLendingPostResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateLendingPostResponse)
+	err := c.cc.Invoke(ctx, LendingPostService_GetLendingPostDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LendingPostServiceServer is the server API for LendingPostService service.
 // All implementations must embed UnimplementedLendingPostServiceServer
 // for forward compatibility.
 type LendingPostServiceServer interface {
 	// RPC method to create a new LendingPost
 	CreateLendingPost(context.Context, *CreateLendingPostRequest) (*CreateLendingPostResponse, error)
+	GetLendingPostDetail(context.Context, *GetLendingPostDetailRequest) (*CreateLendingPostResponse, error)
 	mustEmbedUnimplementedLendingPostServiceServer()
 }
 
@@ -68,6 +81,9 @@ type UnimplementedLendingPostServiceServer struct{}
 
 func (UnimplementedLendingPostServiceServer) CreateLendingPost(context.Context, *CreateLendingPostRequest) (*CreateLendingPostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateLendingPost not implemented")
+}
+func (UnimplementedLendingPostServiceServer) GetLendingPostDetail(context.Context, *GetLendingPostDetailRequest) (*CreateLendingPostResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetLendingPostDetail not implemented")
 }
 func (UnimplementedLendingPostServiceServer) mustEmbedUnimplementedLendingPostServiceServer() {}
 func (UnimplementedLendingPostServiceServer) testEmbeddedByValue()                            {}
@@ -108,6 +124,24 @@ func _LendingPostService_CreateLendingPost_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LendingPostService_GetLendingPostDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetLendingPostDetailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LendingPostServiceServer).GetLendingPostDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LendingPostService_GetLendingPostDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LendingPostServiceServer).GetLendingPostDetail(ctx, req.(*GetLendingPostDetailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // LendingPostService_ServiceDesc is the grpc.ServiceDesc for LendingPostService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -118,6 +152,10 @@ var LendingPostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateLendingPost",
 			Handler:    _LendingPostService_CreateLendingPost_Handler,
+		},
+		{
+			MethodName: "GetLendingPostDetail",
+			Handler:    _LendingPostService_GetLendingPostDetail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -40,11 +40,10 @@ func (r BorrowingPostRepositoryImpl) GetBorrowingPostById(id uint) (*model.Borro
 
 func (r BorrowingPostRepositoryImpl) SearchBorrowingPost(searchString string) (*[]model.BorrowingPost, error) {
 	var posts []model.BorrowingPost
-	err := r.db.Where("description LIKE ?", "%"+searchString+"%").Find(&posts).Error
+	err := r.db.Where("description ILIKE ?", "%"+searchString+"%").Find(&posts).Error
 	if err != nil {
 		return nil, err
 	}
 
 	return &posts, nil
 }
-

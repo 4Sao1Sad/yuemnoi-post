@@ -22,8 +22,7 @@ message CreateLendingPostRequest {
     string description = 2;   
     double price = 3;         
     bool active_status = 4;   
-    string image_url = 5;     
-    string owner_id = 6;     
+    string image_url = 5;       
 }
 
 // Response message for the CreateLendingPost service
@@ -60,13 +59,10 @@ service LendingPostService {
 message BorrowingPost {
     uint64 id = 1;
     string description = 2;     // Required field
-    bool active_status = 3;     // Required field, boolean
-    repeated LendingPost item_list = 4; // List of BorrowingPost
-    string owner_id = 5;        // Required field
-    int64 timestamp = 6;        // Required field, using int64 for timestamps           
-    string created_at = 7;    
-    string updated_at = 8;    
-    string deleted_at = 9;   
+    bool active_status = 3;     // Required field, booleanepeated LendingPost item_list = 4; // List of BorrowingPost
+    string owner_id = 4;        // Required field
+    int64 timestamp = 5;        // Required field, using int64 for timestamps           
+    google.protobuf.Timestamp updated_at = 6; 
   }
   
 // Request message for creating a new BorrowingPost
@@ -86,20 +82,11 @@ message GetBorrowingPostDetailRequest {
     uint64 id = 1;
 }
 
-message GetBorrowingPostDetailResponse {
-    uint64 id = 1;           
-    string description = 2;     // Required field
-    bool active_status = 3;     // Required field, boolean
-    repeated LendingPost item_list = 4; // List of BorrowingPost
-    string owner_id = 5; 
-    string updated_at = 6;         
-}
-
 message SearchBorrowingPostRequest {
     string searchString = 1;
 }
 
-message SearchBorrowingPostResponse{
+message BorrowingPostList{
     repeated BorrowingPost borrowing_post = 1;
 }
 
@@ -107,15 +94,11 @@ message GetBorrowingPostByIdRequest{
     uint64 id = 1;
 }
 
-message GetBorrowingPostByIdResponse{
-    string description = 1;
-    bool active_status = 2;
-}
-
 
 
 service BorrowingPostService {
 // RPC method to create a new BorrowingPost
     rpc CreateBorrowingPost(CreateBorrowingPostRequest) returns (CreateBorrowingPostResponse) {}
-    rpc GetBorrowingPostDetail(GetBorrowingPostDetailRequest) returns (GetBorrowingPostDetailResponse) {}
+    rpc GetBorrowingPostDetail(GetBorrowingPostDetailRequest) returns (BorrowingPost) {}
+    rpc SearchBorrowingPost(SearchBorrowingPostRequest) returns (BorrowingPostList) {}
 }

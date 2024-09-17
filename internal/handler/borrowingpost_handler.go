@@ -8,7 +8,7 @@ import (
 	pb "github.com/bpremika/post/proto/post"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"fmt"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type BorrowingPostGRPC struct {
@@ -24,11 +24,9 @@ func NewBorrowingPostGRPC(repo repository.BorrowingPostRepository) *BorrowingPos
 
 func (g *BorrowingPostGRPC) CreateBorrowingPost(ctx context.Context, input *pb.CreateBorrowingPostRequest) (*pb.CreateBorrowingPostResponse, error) {
 	data := model.BorrowingPost{
-		Description:  input.Description,
-		ActiveStatus: input.ActiveStatus,
-		OwnerID:      input.OwnerId,
+		Description: input.Description,
+		OwnerID:     input.OwnerId,
 	}
-	fmt.Println(data)
 
 	_, err := g.repository.InsertBorrowingPost(data)
 	if err != nil {
@@ -36,33 +34,36 @@ func (g *BorrowingPostGRPC) CreateBorrowingPost(ctx context.Context, input *pb.C
 	}
 
 	resp := pb.CreateBorrowingPostResponse{
-		Message: "success ja",
+		Message: "created",
 	}
 
 	return &resp, nil
 }
 
-func (g *BorrowingPostGRPC) GetBorrowingPostDetail(ctx context.Context, input *pb.GetBorrowingPostDetailRequest) (*pb.GetBorrowingPostDetailResponse, error) {
+func (g *BorrowingPostGRPC) GetBorrowingPostDetail(ctx context.Context, input *pb.GetBorrowingPostDetailRequest) (*pb.BorrowingPost, error) {
 	post, err := g.repository.GetBorrowingPostById(uint(input.Id))
 	if err != nil {
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
 
-	resp := pb.GetBorrowingPostDetailResponse{
+	resp := pb.BorrowingPost{
+		Id:           uint64(post.ID),
 		Description:  post.Description,
 		ActiveStatus: post.ActiveStatus,
+		UpdatedAt:    timestamppb.New(post.UpdatedAt),
+		OwnerId:      post.OwnerID,
 	}
 
 	return &resp, nil
 }
 
-func (g *BorrowingPostGRPC) SearchBorrowingPost(ctx context.Context, input *pb.SearchBorrowingPostRequest) (*pb.SearchBorrowingPostResponse, error) {
+func (g *BorrowingPostGRPC) SearchBorrowingPost(ctx context.Context, input *pb.SearchBorrowingPostRequest) (*pb.BorrowingPostList, error) {
 	posts, err := g.repository.SearchBorrowingPost(input.SearchString)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
 
-	var resp pb.SearchBorrowingPostResponse
+	var resp pb.BorrowingPostList
 	for _, post := range *posts {
 		resp.BorrowingPost = append(resp.BorrowingPost, &pb.BorrowingPost{
 			Description:  post.Description,

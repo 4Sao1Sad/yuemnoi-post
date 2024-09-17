@@ -24,9 +24,10 @@ func NewLendingPostGRPC(repo repository.LendingPostRepository) *LendingPostGRPC 
 
 func (g *LendingPostGRPC) CreateLendingPost(ctx context.Context, input *pb.CreateLendingPostRequest) (*pb.CreateLendingPostResponse, error) {
 	data := model.LendingPost{
-		ItemName:     input.ItemName,
-		Price:        input.Price,
-		ActiveStatus: input.ActiveStatus,
+		ItemName:    input.ItemName,
+		Description: input.Description,
+		Price:       input.Price,
+		ImageURL:    input.ImageUrl,
 	}
 
 	_, err := g.repository.InsertLendingPost(data)
@@ -35,7 +36,7 @@ func (g *LendingPostGRPC) CreateLendingPost(ctx context.Context, input *pb.Creat
 	}
 
 	resp := pb.CreateLendingPostResponse{
-		Message: "success ja",
+		Message: "created",
 	}
 
 	return &resp, nil

@@ -10,6 +10,10 @@ PROTO_FILES = $(shell find $(PROTO_DIR) -name '*.proto')
 
 .PHONY: all generate clean
 
+tools-install:
+	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	
 all: generate
 
 # Generates the Go and gRPC code from proto files
@@ -23,4 +27,4 @@ clean:
 	find $(PROTO_DIR) -name '*.pb.go' -delete
 
 dev: 
-	go run cmd/main.go
+	goreload --build=cmd/

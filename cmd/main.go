@@ -1,27 +1,20 @@
 package main
 
 import (
-	"log"
-
 	"github.com/bpremika/post/db"
+	"github.com/bpremika/post/internal/config"
 	"github.com/bpremika/post/internal/model"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	// Load .env file
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-
+	cfg := config.Load()
 	// Initialize the DB connection
-	db.InitDB()
+	db.InitDB(cfg)
 
 	_ = db.DB.AutoMigrate(&model.LendingPost{})
 	_ = db.DB.AutoMigrate(&model.BorrowingPost{})
 
-	err = db.ServerInit(db.DB)
+	err := db.ServerInit(cfg, db.DB)
 	if err != nil {
 		panic(err)
 	}

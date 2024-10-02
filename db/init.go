@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"os"
 
+	"github.com/bpremika/post/internal/config"
 	"github.com/bpremika/post/internal/handler"
 	"github.com/bpremika/post/internal/repository"
 	"github.com/bpremika/post/proto/post"
@@ -17,17 +17,10 @@ import (
 var DB *gorm.DB
 
 // InitDB initializes a connection to the PostgreSQL database using GORM
-func InitDB() {
-	// Set the PostgreSQL connection details
-	host := os.Getenv("DB_HOST")
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	dbname := os.Getenv("DB_NAME")
-	port := os.Getenv("DB_PORT")
-
+func InitDB(cfg *config.Config) {
 	// Format the DSN (Data Source Name) string for PostgreSQL
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=UTC",
-		host, user, password, dbname, port)
+		cfg.Db.Host, cfg.Db.Username, cfg.Db.Password, cfg.Db.Database, cfg.Db.Port)
 
 	// Connect to the PostgreSQL database
 	var err error
@@ -39,10 +32,8 @@ func InitDB() {
 	log.Println("Database connection established")
 }
 
-func ServerInit(db *gorm.DB) error {
-	port := ":8081"
-
-	listen, err := net.Listen("tcp", port)
+func ServerInit(cfg *config.Config, db *gorm.DB) error {
+	listen, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -51,7 +42,7 @@ func ServerInit(db *gorm.DB) error {
 		listen.Close()
 	}()
 
-	fmt.Printf("Go gRPC server in port %v!", port)
+	fmt.Printf("Go gRPC server in port %v!", cfg.Port)
 	grpcServer := grpc.NewServer()
 	// register
 	lendingPostRepo := repository.NewLendingPostRepository(db)

@@ -1,27 +1,37 @@
 package config
 
-import "github.com/jinzhu/configor"
+import (
+	"log"
+
+	"github.com/spf13/viper"
+)
 
 type Config struct {
-	AppName string `yaml:"app_name" default:"grpc"`
-	Port    int32  `yaml:"port" default:"8081"`
-	DB      struct {
-		Use      string `yaml:"use" default:"postgresql"`
-		Postgres []struct {
-			Enabled  bool   `yaml:"enabled" default:"true"`
-			Host     string `yaml:"host" default:"localhost"`
-			Port     string `yaml:"port" default:"5432"`
-			UserName string `yaml:"username" default:"youruser"`
-			Password string `yaml:"password" default:"yourpassword"`
-			Database string `yaml:"database" default:"yourdbname"`
-		} `yaml:"postgres"`
-	} `yaml:"db"`
+	AppName string `yaml:"app_name"`
+	Port    int32  `yaml:"port"`
+	Db      DB     `mapstructure:"DB"`
 }
 
-func (c *Config) NewConfig() (*Config, error) {
-	err := configor.Load(c, "config.yaml")
-	if err != nil {
-		return nil, err
+type DB struct {
+	Host     string `yaml:"host" default:"localhost"`
+	Port     string `yaml:"port" default:"5432"`
+	Username string `yaml:"username" default:"youruser"`
+	Password string `yaml:"password" default:"yourpassword"`
+	Database string `yaml:"database" default:"yourdbname"`
+}
+
+func Load() *Config {
+	config := Config{}
+	viper.AddConfigPath("./config")
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatal("error occurs while reading the config. ", err)
 	}
-	return c, nil
+
+	if err := viper.Unmarshal(&config); err != nil {
+		log.Fatal("error occurs while unmarshalling the config. ", err)
+	}
+	return &config
 }

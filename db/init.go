@@ -22,6 +22,7 @@ func InitDB(cfg *config.Config) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=UTC",
 		cfg.Db.Host, cfg.Db.Username, cfg.Db.Password, cfg.Db.Database, cfg.Db.Port)
 
+	fmt.Println(dsn)
 	// Connect to the PostgreSQL database
 	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})

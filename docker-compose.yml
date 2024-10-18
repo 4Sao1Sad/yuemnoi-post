@@ -1,8 +1,8 @@
+version: '3.8'
+
 services:
-  db:
+  database:
     image: postgres:14
-    container_name: postgres_db
-    restart: always
     environment:
       POSTGRES_USER: youruser
       POSTGRES_PASSWORD: yourpassword
@@ -11,6 +11,18 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+
+  go_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: make dev
+    depends_on:
+      - database
+    environment:
+      DATABASE_URL: postgres://youruser:yourpassword@database:5434/yourdbname
+    ports:
+      - "8080:8080"  # Adjust based on the port your Go service runs on
 
 volumes:
   postgres_data:

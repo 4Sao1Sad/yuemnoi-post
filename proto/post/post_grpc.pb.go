@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	LendingPostService_CreateLendingPost_FullMethodName    = "/LendingPostService/CreateLendingPost"
+	LendingPostService_UpdateLendingPost_FullMethodName    = "/LendingPostService/UpdateLendingPost"
 	LendingPostService_GetLendingPostDetail_FullMethodName = "/LendingPostService/GetLendingPostDetail"
 	LendingPostService_SearchLendingPost_FullMethodName    = "/LendingPostService/SearchLendingPost"
 )
@@ -31,6 +32,7 @@ const (
 // LendingPostService definition
 type LendingPostServiceClient interface {
 	CreateLendingPost(ctx context.Context, in *CreateLendingPostRequest, opts ...grpc.CallOption) (*CreateLendingPostResponse, error)
+	UpdateLendingPost(ctx context.Context, in *UpdateLendingPostRequest, opts ...grpc.CallOption) (*UpdateLendingPostResponse, error)
 	GetLendingPostDetail(ctx context.Context, in *GetLendingPostDetailRequest, opts ...grpc.CallOption) (*LendingPost, error)
 	SearchLendingPost(ctx context.Context, in *SearchLendingPostRequest, opts ...grpc.CallOption) (*LendingPostList, error)
 }
@@ -47,6 +49,16 @@ func (c *lendingPostServiceClient) CreateLendingPost(ctx context.Context, in *Cr
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateLendingPostResponse)
 	err := c.cc.Invoke(ctx, LendingPostService_CreateLendingPost_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *lendingPostServiceClient) UpdateLendingPost(ctx context.Context, in *UpdateLendingPostRequest, opts ...grpc.CallOption) (*UpdateLendingPostResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateLendingPostResponse)
+	err := c.cc.Invoke(ctx, LendingPostService_UpdateLendingPost_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,6 +92,7 @@ func (c *lendingPostServiceClient) SearchLendingPost(ctx context.Context, in *Se
 // LendingPostService definition
 type LendingPostServiceServer interface {
 	CreateLendingPost(context.Context, *CreateLendingPostRequest) (*CreateLendingPostResponse, error)
+	UpdateLendingPost(context.Context, *UpdateLendingPostRequest) (*UpdateLendingPostResponse, error)
 	GetLendingPostDetail(context.Context, *GetLendingPostDetailRequest) (*LendingPost, error)
 	SearchLendingPost(context.Context, *SearchLendingPostRequest) (*LendingPostList, error)
 	mustEmbedUnimplementedLendingPostServiceServer()
@@ -94,6 +107,9 @@ type UnimplementedLendingPostServiceServer struct{}
 
 func (UnimplementedLendingPostServiceServer) CreateLendingPost(context.Context, *CreateLendingPostRequest) (*CreateLendingPostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateLendingPost not implemented")
+}
+func (UnimplementedLendingPostServiceServer) UpdateLendingPost(context.Context, *UpdateLendingPostRequest) (*UpdateLendingPostResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateLendingPost not implemented")
 }
 func (UnimplementedLendingPostServiceServer) GetLendingPostDetail(context.Context, *GetLendingPostDetailRequest) (*LendingPost, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetLendingPostDetail not implemented")
@@ -136,6 +152,24 @@ func _LendingPostService_CreateLendingPost_Handler(srv interface{}, ctx context.
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(LendingPostServiceServer).CreateLendingPost(ctx, req.(*CreateLendingPostRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LendingPostService_UpdateLendingPost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateLendingPostRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LendingPostServiceServer).UpdateLendingPost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LendingPostService_UpdateLendingPost_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LendingPostServiceServer).UpdateLendingPost(ctx, req.(*UpdateLendingPostRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -188,6 +222,10 @@ var LendingPostService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _LendingPostService_CreateLendingPost_Handler,
 		},
 		{
+			MethodName: "UpdateLendingPost",
+			Handler:    _LendingPostService_UpdateLendingPost_Handler,
+		},
+		{
 			MethodName: "GetLendingPostDetail",
 			Handler:    _LendingPostService_GetLendingPostDetail_Handler,
 		},
@@ -202,6 +240,7 @@ var LendingPostService_ServiceDesc = grpc.ServiceDesc{
 
 const (
 	BorrowingPostService_CreateBorrowingPost_FullMethodName    = "/BorrowingPostService/CreateBorrowingPost"
+	BorrowingPostService_UpdateBorrowingPost_FullMethodName    = "/BorrowingPostService/UpdateBorrowingPost"
 	BorrowingPostService_GetBorrowingPostDetail_FullMethodName = "/BorrowingPostService/GetBorrowingPostDetail"
 	BorrowingPostService_SearchBorrowingPost_FullMethodName    = "/BorrowingPostService/SearchBorrowingPost"
 )
@@ -212,6 +251,7 @@ const (
 type BorrowingPostServiceClient interface {
 	// RPC method to create a new BorrowingPost
 	CreateBorrowingPost(ctx context.Context, in *CreateBorrowingPostRequest, opts ...grpc.CallOption) (*CreateBorrowingPostResponse, error)
+	UpdateBorrowingPost(ctx context.Context, in *UpdateBorrowingPostRequest, opts ...grpc.CallOption) (*UpdateBorrowingPostResponse, error)
 	GetBorrowingPostDetail(ctx context.Context, in *GetBorrowingPostDetailRequest, opts ...grpc.CallOption) (*BorrowingPost, error)
 	SearchBorrowingPost(ctx context.Context, in *SearchBorrowingPostRequest, opts ...grpc.CallOption) (*BorrowingPostList, error)
 }
@@ -228,6 +268,16 @@ func (c *borrowingPostServiceClient) CreateBorrowingPost(ctx context.Context, in
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateBorrowingPostResponse)
 	err := c.cc.Invoke(ctx, BorrowingPostService_CreateBorrowingPost_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *borrowingPostServiceClient) UpdateBorrowingPost(ctx context.Context, in *UpdateBorrowingPostRequest, opts ...grpc.CallOption) (*UpdateBorrowingPostResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateBorrowingPostResponse)
+	err := c.cc.Invoke(ctx, BorrowingPostService_UpdateBorrowingPost_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -260,6 +310,7 @@ func (c *borrowingPostServiceClient) SearchBorrowingPost(ctx context.Context, in
 type BorrowingPostServiceServer interface {
 	// RPC method to create a new BorrowingPost
 	CreateBorrowingPost(context.Context, *CreateBorrowingPostRequest) (*CreateBorrowingPostResponse, error)
+	UpdateBorrowingPost(context.Context, *UpdateBorrowingPostRequest) (*UpdateBorrowingPostResponse, error)
 	GetBorrowingPostDetail(context.Context, *GetBorrowingPostDetailRequest) (*BorrowingPost, error)
 	SearchBorrowingPost(context.Context, *SearchBorrowingPostRequest) (*BorrowingPostList, error)
 	mustEmbedUnimplementedBorrowingPostServiceServer()
@@ -274,6 +325,9 @@ type UnimplementedBorrowingPostServiceServer struct{}
 
 func (UnimplementedBorrowingPostServiceServer) CreateBorrowingPost(context.Context, *CreateBorrowingPostRequest) (*CreateBorrowingPostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBorrowingPost not implemented")
+}
+func (UnimplementedBorrowingPostServiceServer) UpdateBorrowingPost(context.Context, *UpdateBorrowingPostRequest) (*UpdateBorrowingPostResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBorrowingPost not implemented")
 }
 func (UnimplementedBorrowingPostServiceServer) GetBorrowingPostDetail(context.Context, *GetBorrowingPostDetailRequest) (*BorrowingPost, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBorrowingPostDetail not implemented")
@@ -316,6 +370,24 @@ func _BorrowingPostService_CreateBorrowingPost_Handler(srv interface{}, ctx cont
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BorrowingPostServiceServer).CreateBorrowingPost(ctx, req.(*CreateBorrowingPostRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BorrowingPostService_UpdateBorrowingPost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateBorrowingPostRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BorrowingPostServiceServer).UpdateBorrowingPost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BorrowingPostService_UpdateBorrowingPost_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BorrowingPostServiceServer).UpdateBorrowingPost(ctx, req.(*UpdateBorrowingPostRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -366,6 +438,10 @@ var BorrowingPostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateBorrowingPost",
 			Handler:    _BorrowingPostService_CreateBorrowingPost_Handler,
+		},
+		{
+			MethodName: "UpdateBorrowingPost",
+			Handler:    _BorrowingPostService_UpdateBorrowingPost_Handler,
 		},
 		{
 			MethodName: "GetBorrowingPostDetail",

@@ -73,3 +73,29 @@ func (g *BorrowingPostGRPC) SearchBorrowingPost(ctx context.Context, input *pb.S
 
 	return &resp, nil
 }
+
+func (g *BorrowingPostGRPC) UpdateBorrowingPost(ctx context.Context, input *pb.UpdateBorrowingPostRequest) (*pb.UpdateBorrowingPostResponse, error) {
+	updates := make(map[string]interface{})
+
+	if input.UpdateMask != nil {
+		for _, path := range input.UpdateMask.Paths {
+			switch path {
+			case "description":
+				updates["Description"] = input.Description
+			case "active_status":
+				updates["ActiveStatus"] = input.ActiveStatus
+			}
+		}
+	}
+
+	_, err := g.repository.UpdateBorrowingPost(updates)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	resp := pb.UpdateBorrowingPostResponse{
+		Message: "updated",
+	}
+
+	return &resp, nil
+}

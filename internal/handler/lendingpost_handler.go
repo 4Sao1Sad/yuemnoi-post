@@ -88,3 +88,35 @@ func (g *LendingPostGRPC) SearchLendingPost(ctx context.Context, input *pb.Searc
 
 	return &resp, nil
 }
+
+func (g *LendingPostGRPC) UpdateLendingPost(ctx context.Context, input *pb.UpdateLendingPostRequest) (*pb.UpdateLendingPostResponse, error) {
+	updates := make(map[string]interface{})
+
+	if input.UpdateMask != nil {
+		for _, path := range input.UpdateMask.Paths {
+			switch path {
+			case "item_name":
+				updates["ItemName"] = input.ItemName
+			case "description":
+				updates["Description"] = input.Description
+			case "price":
+				updates["Price"] = input.Price
+			case "active_status":
+				updates["ActiveStatus"] = input.ActiveStatus
+			case "image_url":
+				updates["ImageURL"] = input.ImageUrl
+			}
+		}
+	}
+
+	_, err := g.repository.UpdateLendingPost(updates)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	resp := pb.UpdateLendingPostResponse{
+		Message: "updated",
+	}
+
+	return &resp, nil
+}

@@ -8,5 +8,5 @@ type BorrowingPost struct {
 	gorm.Model
 	Description  string `gorm:"type:text;not null"`
 	ActiveStatus bool   `gorm:"not null;default:true"`
-	OwnerID      string `gorm:"type:varchar(100);not null"`
+	OwnerID      uint64 `gorm:"not null"`
 }

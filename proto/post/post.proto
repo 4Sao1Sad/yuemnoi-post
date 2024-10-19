@@ -2,7 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/bpremika/post";
+option go_package = "github.com/4Sao1Sad/yuemnoi-post";
 
 // LendingPost message representing the structure of the LendingPost object
 message LendingPost {
@@ -12,7 +12,7 @@ message LendingPost {
     double price = 4;         
     bool active_status = 5;   
     string image_url = 6;     
-    string owner_id = 7;      
+    uint64 owner_id = 7;      
     google.protobuf.Timestamp updated_at = 8;  
 }
   
@@ -60,7 +60,7 @@ message BorrowingPost {
     uint64 id = 1;
     string description = 2;     // Required field
     bool active_status = 3;     // Required field, booleanepeated LendingPost item_list = 4; // List of BorrowingPost
-    string owner_id = 4;        // Required field
+    uint64 owner_id = 4;        // Required field
     int64 timestamp = 5;        // Required field, using int64 for timestamps           
     google.protobuf.Timestamp updated_at = 6; 
   }
@@ -69,7 +69,7 @@ message BorrowingPost {
 message CreateBorrowingPostRequest {   
     string description = 1;   // Optional: Description of the item
     bool active_status = 2;   // Required: Active status of the post
-    string owner_id = 3;      // Required: ID of the owner (can be a UUID)
+    uint64 owner_id = 3;      // Required: ID of the owner (can be a UUID)
 }
 
 // Response message for the CreateBorrowingPost service
@@ -93,8 +93,6 @@ message BorrowingPostList{
 message GetBorrowingPostByIdRequest{
     uint64 id = 1;
 }
-
-
 
 service BorrowingPostService {
 // RPC method to create a new BorrowingPost

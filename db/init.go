@@ -8,7 +8,7 @@ import (
 	"github.com/bpremika/post/internal/config"
 	"github.com/bpremika/post/internal/handler"
 	"github.com/bpremika/post/internal/repository"
-	"github.com/bpremika/post/proto/post"
+	post "github.com/bpremika/post/proto/post"
 	"google.golang.org/grpc"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

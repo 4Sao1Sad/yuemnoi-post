@@ -13,7 +13,7 @@ type LendingPostRepository interface {
 	InsertLendingPost(post model.LendingPost) (*model.LendingPost, error)
 	GetLendingPostById(id uint64) (*model.LendingPost, error)
 	SearchLendingPost(searchString string) (*[]model.LendingPost, error)
-	UpdateLendingPost(updatedFields map[string]interface{}) (*model.LendingPost, error)
+	UpdateLendingPost(id uint, updatedFields map[string]interface{}) (*model.LendingPost, error)
 }
 
 func NewLendingPostRepository(db *gorm.DB) LendingPostRepository {
@@ -49,9 +49,9 @@ func (r LendingPostRepositoryImpl) SearchLendingPost(searchString string) (*[]mo
 	return &posts, nil
 }
 
-func (r LendingPostRepositoryImpl) UpdateLendingPost(updatedFields map[string]interface{}) (*model.LendingPost, error) {
+func (r LendingPostRepositoryImpl) UpdateLendingPost(id uint, updatedFields map[string]interface{}) (*model.LendingPost, error) {
 	var post model.LendingPost
-	err := r.db.Model(&post).Updates(updatedFields).Error
+	err := r.db.Model(&post).Where("id = ?", id).Updates(updatedFields).Error
 	if err != nil {
 		return nil, err
 	}

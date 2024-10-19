@@ -13,7 +13,7 @@ type BorrowingPostRepository interface {
 	InsertBorrowingPost(post model.BorrowingPost) (*model.BorrowingPost, error)
 	GetBorrowingPostById(id uint) (*model.BorrowingPost, error)
 	SearchBorrowingPost(searchString string) (*[]model.BorrowingPost, error)
-	UpdateBorrowingPost(updatedFields map[string]interface{}) (*model.BorrowingPost, error)
+	UpdateBorrowingPost(id uint, updatedFields map[string]interface{}) (*model.BorrowingPost, error)
 }
 
 func NewBorrowingPostRepository(db *gorm.DB) BorrowingPostRepository {
@@ -49,9 +49,9 @@ func (r BorrowingPostRepositoryImpl) SearchBorrowingPost(searchString string) (*
 	return &posts, nil
 }
 
-func (r BorrowingPostRepositoryImpl) UpdateBorrowingPost(updatedFields map[string]interface{}) (*model.BorrowingPost, error) {
+func (r BorrowingPostRepositoryImpl) UpdateBorrowingPost(id uint, updatedFields map[string]interface{}) (*model.BorrowingPost, error) {
 	var post model.BorrowingPost
-	err := r.db.Model(&post).Updates(updatedFields).Error
+	err := r.db.Model(&post).Where("id = ?", id).Updates(updatedFields).Error
 	if err != nil {
 		return nil, err
 	}

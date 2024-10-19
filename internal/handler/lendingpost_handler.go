@@ -108,8 +108,7 @@ func (g *LendingPostGRPC) UpdateLendingPost(ctx context.Context, input *pb.Updat
 			}
 		}
 	}
-
-	_, err := g.repository.UpdateLendingPost(updates)
+	_, err := g.repository.UpdateLendingPost(uint(input.Id), updates)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}

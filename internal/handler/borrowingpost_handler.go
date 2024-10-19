@@ -88,7 +88,7 @@ func (g *BorrowingPostGRPC) UpdateBorrowingPost(ctx context.Context, input *pb.U
 		}
 	}
 
-	_, err := g.repository.UpdateBorrowingPost(updates)
+	_, err := g.repository.UpdateBorrowingPost(uint(input.Id), updates)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}

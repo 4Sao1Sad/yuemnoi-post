@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+
+option go_package = "github.com/4Sao1Sad/yuemnoi-post";
+
+message ActivityLog {
+		string logDetail = 1;
+		uint64 user_id = 2;
+		string timestamp = 3;
+}
+
+message CreateActivityLogRequest {
+    string logDetail = 1;
+		uint64 user_id = 2;       
+}
+
+message CreateActivityLogResponse {
+		ActivityLog activityLog = 1;      
+}
+
+service ActivityLogService {
+    rpc CreateActivityLog(CreateActivityLogRequest) returns (CreateActivityLogResponse) {}
+}

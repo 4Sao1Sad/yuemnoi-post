@@ -3,7 +3,7 @@ syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/field_mask.proto";
 
-option go_package = "github.com/bpremika/post";
+option go_package = "github.com/4Sao1Sad/yuemnoi-post";
 
 // LendingPost message representing the structure of the LendingPost object
 message LendingPost {

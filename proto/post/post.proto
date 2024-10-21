@@ -3,7 +3,7 @@ syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/field_mask.proto";
 
-option go_package = "github.com/bpremika/post";
+option go_package = "github.com/4Sao1Sad/yuemnoi-post";
 
 // LendingPost message representing the structure of the LendingPost object
 message LendingPost {
@@ -76,7 +76,7 @@ message BorrowingPost {
     uint64 id = 1;
     string description = 2;     // Required field
     bool active_status = 3;     // Required field, booleanepeated LendingPost item_list = 4; // List of BorrowingPost
-    uint64 owner_id = 4;        // Required field
+    uint64 owner_id = 4;        // Required field       
     google.protobuf.Timestamp updated_at = 5; 
   }
   

@@ -30,6 +30,10 @@ func (g *BorrowingPostGRPC) CreateBorrowingPost(ctx context.Context, input *pb.C
 		OwnerID:     input.OwnerId,
 	}
 
+	if err := util.CheckUserExists(uint(input.OwnerId)); err != nil {
+		return nil, err
+	}
+
 	_, err := g.repository.InsertBorrowingPost(data)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())

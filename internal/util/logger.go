@@ -4,13 +4,15 @@ import (
 	"context"
 	"log"
 
+	"github.com/bpremika/post/internal/config"
 	activitypb "github.com/bpremika/post/proto/activity"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 func CallActivityLogService(userID uint64, logDetail string) error {
-	conn, err := grpc.NewClient("localhost:8085", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cfg := config.Load()
+	conn, err := grpc.NewClient(cfg.ActivityLogUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Printf("Failed to connect to ActivityLogService: %v", err)
 		return err

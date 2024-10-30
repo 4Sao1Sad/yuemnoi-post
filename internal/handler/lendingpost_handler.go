@@ -30,6 +30,10 @@ func (g *LendingPostGRPC) CreateLendingPost(ctx context.Context, input *pb.Creat
 		Description: input.Description,
 		Price:       input.Price,
 		ImageURL:    input.ImageUrl,
+		OwnerID:     input.OwnerId,
+	}
+	if err := util.CheckUserExists(uint(input.OwnerId)); err != nil {
+		return nil, err
 	}
 
 	_, err := g.repository.InsertLendingPost(data)

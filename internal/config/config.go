@@ -7,9 +7,11 @@ import (
 )
 
 type Config struct {
-	AppName string `yaml:"app_name"`
-	Port    int32  `yaml:"port"`
-	Db      DB     `mapstructure:"DB"`
+	AppName        string `yaml:"app_name"`
+	Port           int32  `yaml:"port"`
+	Db             DB     `mapstructure:"DB"`
+	ActivityLogUrl string `yaml:"activityLogUrl"`
+	UserInfoURL    string `yaml:"userInfoUrl"`
 }
 
 type DB struct {

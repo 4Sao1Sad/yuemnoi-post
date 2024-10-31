@@ -6,23 +6,23 @@ services:
     environment:
       POSTGRES_USER: youruser
       POSTGRES_PASSWORD: yourpassword
-      POSTGRES_DB: yourdbname
+      POSTGRES_DB: post
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postdb_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5434:5432"  # Exposing the database on port 5434 externally
 
   go_service:
     build:
       context: .
       dockerfile: Dockerfile
-    command: make dev
+    command: go run ./cmd/main.go
     depends_on:
       - database
-    environment:
-      DATABASE_URL: postgres://youruser:yourpassword@database:5434/yourdbname
     ports:
-      - "8080:8080"  # Adjust based on the port your Go service runs on
+      - "8081:8081"
+    volumes:
+      - ./config/config-deployment.yaml:/app/config/config.yaml
 
 volumes:
-  postgres_data:
+  postdb_data:

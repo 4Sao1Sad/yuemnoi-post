@@ -36,7 +36,5 @@ WORKDIR /app
 COPY --from=builder /app .
 
 # Expose the port on which your service runs (adjust based on your app)
-EXPOSE 8080
+EXPOSE 8081 
 
-# Run the application in development mode using goreload
-CMD ["make", "dev"]

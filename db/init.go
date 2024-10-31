@@ -4,11 +4,16 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strconv"
 
 	"github.com/bpremika/post/internal/config"
-	"github.com/bpremika/post/internal/handler"
+	grpcHandler "github.com/bpremika/post/internal/handler/grpc"
+	restHandler "github.com/bpremika/post/internal/handler/rest"
 	"github.com/bpremika/post/internal/repository"
+	"github.com/bpremika/post/internal/route"
 	post "github.com/bpremika/post/proto/post"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"google.golang.org/grpc"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -22,7 +27,7 @@ func InitDB(cfg *config.Config) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=UTC",
 		cfg.Db.Host, cfg.Db.Username, cfg.Db.Password, cfg.Db.Database, cfg.Db.Port)
 
-	fmt.Println(dsn)
+	log.Println(dsn)
 	// Connect to the PostgreSQL database
 	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -34,7 +39,7 @@ func InitDB(cfg *config.Config) {
 }
 
 func ServerInit(cfg *config.Config, db *gorm.DB) error {
-	listen, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Port))
+	listen, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.GRPCPort))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -43,16 +48,32 @@ func ServerInit(cfg *config.Config, db *gorm.DB) error {
 		listen.Close()
 	}()
 
-	fmt.Printf("Go gRPC server in port %v!", cfg.Port)
+	log.Printf("Go gRPC server in port %v!", cfg.GRPCPort)
+
 	grpcServer := grpc.NewServer()
+	app := fiber.New()
+	app.Use(requestid.New())
 	// register
+	//repo
 	lendingPostRepo := repository.NewLendingPostRepository(db)
-	lendingPostServer := handler.NewLendingPostGRPC(lendingPostRepo)
 	borrowingPostRepo := repository.NewBorrowingPostRepository(db)
-	borrowingPostServer := handler.NewBorrowingPostGRPC(borrowingPostRepo)
+
+	//grpc
+	lendingPostGPRCServer := grpcHandler.NewLendingPostGRPC(lendingPostRepo)
+	borrowingPostGPRCServer := grpcHandler.NewBorrowingPostGRPC(borrowingPostRepo)
+
+	//rest
+	lendingPostRestHandler := restHandler.NewLendingPostRest(lendingPostRepo)
+	borrowingPostRestHandler := restHandler.NewBorrowingPostRest(borrowingPostRepo)
+
 	// put register server here
-	post.RegisterLendingPostServiceServer(grpcServer, lendingPostServer)
-	post.RegisterBorrowingPostServiceServer(grpcServer, borrowingPostServer)
+	post.RegisterLendingPostServiceServer(grpcServer, lendingPostGPRCServer)
+	post.RegisterBorrowingPostServiceServer(grpcServer, borrowingPostGPRCServer)
+
+	r := route.NewHandler(borrowingPostRestHandler, lendingPostRestHandler)
+	r.RegisterRouter(app, cfg)
+
+	app.Listen(":" + strconv.Itoa(int(cfg.Port)))
 	err = grpcServer.Serve(listen)
 	if err != nil {
 		return fmt.Errorf("error to serve: %v", err.Error())

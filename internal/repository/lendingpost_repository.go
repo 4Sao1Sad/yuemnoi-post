@@ -12,6 +12,8 @@ type LendingPostRepositoryImpl struct {
 type LendingPostRepository interface {
 	InsertLendingPost(post model.LendingPost) (*model.LendingPost, error)
 	GetLendingPostById(id uint64) (*model.LendingPost, error)
+	GetLendingPostsByIds(ids []uint64) (*[]model.LendingPost, error)
+	GetMyLendingPosts(userId uint64) (*[]model.LendingPost, error)
 	SearchLendingPost(searchString string) (*[]model.LendingPost, error)
 	UpdateLendingPost(id uint, updatedFields map[string]interface{}) (*model.LendingPost, error)
 }
@@ -39,9 +41,29 @@ func (r LendingPostRepositoryImpl) GetLendingPostById(id uint64) (*model.Lending
 	return &post, nil
 }
 
+func (r LendingPostRepositoryImpl) GetLendingPostsByIds(ids []uint64) (*[]model.LendingPost, error) {
+	var posts []model.LendingPost
+	err := r.db.Where("id IN ?", ids).Find(&posts).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &posts, nil
+}
+
+func (r LendingPostRepositoryImpl) GetMyLendingPosts(userId uint64) (*[]model.LendingPost, error) {
+	var posts []model.LendingPost
+	err := r.db.Where("owner_id = ?", userId).Find(&posts).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &posts, nil
+}
+
 func (r LendingPostRepositoryImpl) SearchLendingPost(searchString string) (*[]model.LendingPost, error) {
 	var posts []model.LendingPost
-	err := r.db.Where("item_name ILIKE ?", "%"+searchString+"%").Find(&posts).Error
+	err := r.db.Where("item_name ILIKE ? AND active_status = ?", "%"+searchString+"%", true).Find(&posts).Error
 	if err != nil {
 		return nil, err
 	}

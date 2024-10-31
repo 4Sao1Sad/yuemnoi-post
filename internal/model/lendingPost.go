@@ -12,4 +12,5 @@ type LendingPost struct {
 	ActiveStatus bool    `gorm:"not null;default:true"`
 	ImageURL     string  `gorm:"type:varchar(255);"`
 	OwnerID      uint64  `gorm:"not null"`
+	OwnerName    string  `gorm:"not null"`
 }

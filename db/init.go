@@ -38,46 +38,51 @@ func InitDB(cfg *config.Config) {
 	log.Println("Database connection established")
 }
 
-func ServerInit(cfg *config.Config, db *gorm.DB) error {
+func ServerInit(cfg *config.Config, db *gorm.DB) {
+	// Configure gRPC
 	listen, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.GRPCPort))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
+	defer listen.Close()
 
-	defer func() {
-		listen.Close()
-	}()
-
-	log.Printf("Go gRPC server in port %v!", cfg.GRPCPort)
-
+	log.Printf("Go gRPC server is running on port %v!", cfg.GRPCPort)
 	grpcServer := grpc.NewServer()
+
+	// Fiber App
 	app := fiber.New()
 	app.Use(requestid.New())
-	// register
-	//repo
+
+	// Repository and Handlers
 	lendingPostRepo := repository.NewLendingPostRepository(db)
 	borrowingPostRepo := repository.NewBorrowingPostRepository(db)
 
-	//grpc
-	lendingPostGPRCServer := grpcHandler.NewLendingPostGRPC(lendingPostRepo)
-	borrowingPostGPRCServer := grpcHandler.NewBorrowingPostGRPC(borrowingPostRepo)
+	// gRPC Handlers
+	lendingPostGRPCServer := grpcHandler.NewLendingPostGRPC(lendingPostRepo)
+	borrowingPostGRPCServer := grpcHandler.NewBorrowingPostGRPC(borrowingPostRepo)
 
-	//rest
+	// REST Handlers
 	lendingPostRestHandler := restHandler.NewLendingPostRest(lendingPostRepo)
 	borrowingPostRestHandler := restHandler.NewBorrowingPostRest(borrowingPostRepo)
 
-	// put register server here
-	post.RegisterLendingPostServiceServer(grpcServer, lendingPostGPRCServer)
-	post.RegisterBorrowingPostServiceServer(grpcServer, borrowingPostGPRCServer)
+	// Register gRPC services
+	post.RegisterLendingPostServiceServer(grpcServer, lendingPostGRPCServer)
+	post.RegisterBorrowingPostServiceServer(grpcServer, borrowingPostGRPCServer)
 
+	// Register REST routes
 	r := route.NewHandler(borrowingPostRestHandler, lendingPostRestHandler)
 	r.RegisterRouter(app, cfg)
 
-	app.Listen(":" + strconv.Itoa(int(cfg.Port)))
-	err = grpcServer.Serve(listen)
-	if err != nil {
-		return fmt.Errorf("error to serve: %v", err.Error())
+	// Run gRPC server in a separate goroutine
+	go func() {
+		if err := grpcServer.Serve(listen); err != nil {
+			log.Fatalf("failed to serve gRPC server: %v", err)
+		}
+	}()
+
+	// Run Fiber server
+	if err := app.Listen(":" + strconv.Itoa(int(cfg.Port))); err != nil {
+		log.Fatalf("failed to serve Fiber server: %v", err)
 	}
 
-	return nil
 }

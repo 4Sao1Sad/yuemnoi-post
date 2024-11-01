@@ -14,8 +14,5 @@ func main() {
 	_ = db.DB.AutoMigrate(&model.LendingPost{})
 	_ = db.DB.AutoMigrate(&model.BorrowingPost{})
 
-	err := db.ServerInit(cfg, db.DB)
-	if err != nil {
-		panic(err)
-	}
+	db.ServerInit(cfg, db.DB)
 }

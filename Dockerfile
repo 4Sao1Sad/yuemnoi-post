@@ -36,5 +36,5 @@ WORKDIR /app
 COPY --from=builder /app .
 
 # Expose the port on which your service runs (adjust based on your app)
-EXPOSE 8081 
+EXPOSE 8081 30043
 

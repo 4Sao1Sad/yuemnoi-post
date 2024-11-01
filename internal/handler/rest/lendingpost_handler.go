@@ -78,7 +78,7 @@ func (g *LendingPostRest) CreateLendingPost(c *fiber.Ctx) error {
 }
 
 func (g *LendingPostRest) SearchLendingPost(c *fiber.Ctx) error {
-	searchString := c.Params("search")
+	searchString := c.Query("search")
 
 	posts, err := g.repository.SearchLendingPost(searchString)
 	if err != nil {

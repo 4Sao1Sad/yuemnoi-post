@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/bpremika/post/internal/dto"
@@ -75,7 +76,7 @@ func (g *BorrowingPostRest) CreateBorrowingPost(c *fiber.Ctx) error {
 }
 
 func (g *BorrowingPostRest) SearchBorrowingPost(c *fiber.Ctx) error {
-	searchString := c.Params("search")
+	searchString := c.Query("search")
 
 	posts, err := g.repository.SearchBorrowingPost(searchString)
 	if err != nil {
@@ -100,6 +101,7 @@ func (g *BorrowingPostRest) SearchBorrowingPost(c *fiber.Ctx) error {
 
 func (g *BorrowingPostRest) GetMyBorrowingPosts(c *fiber.Ctx) error {
 	userIdString := c.Get("X-User-Id")
+	fmt.Println("userIdString", userIdString)
 	if userIdString == "" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "User not authenticated",
@@ -113,6 +115,7 @@ func (g *BorrowingPostRest) GetMyBorrowingPosts(c *fiber.Ctx) error {
 		})
 	}
 
+	fmt.Println("userId", userId)
 	posts, err := g.repository.GetMyBorrowingPosts(uint64(userId))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

@@ -21,14 +21,14 @@ func NewHandler(borrowingPostRestHandler *handler.BorrowingPostRest, lendingPost
 func (h *Handler) RegisterRouter(r fiber.Router, cfg *config.Config) {
 	{
 		borrowingPostRouter := r.Group("/borrowing-posts")
-		borrowingPostRouter.Get("/:search", h.borrowingPostRestHandler.SearchBorrowingPost)
 		borrowingPostRouter.Get("/me", h.borrowingPostRestHandler.GetMyBorrowingPosts)
+		borrowingPostRouter.Get("/", h.borrowingPostRestHandler.SearchBorrowingPost)
 		borrowingPostRouter.Post("/", h.borrowingPostRestHandler.CreateBorrowingPost)
 	}
 	{
 		LendingPostRouter := r.Group("/lending-posts")
-		LendingPostRouter.Get("/:search", h.lendingPostRestHandler.SearchLendingPost)
 		LendingPostRouter.Get("/me", h.lendingPostRestHandler.GetMyLendingPosts)
+		LendingPostRouter.Get("/", h.lendingPostRestHandler.SearchLendingPost)
 		LendingPostRouter.Post("/", h.lendingPostRestHandler.CreateLendingPost)
 	}
 }

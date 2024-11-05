@@ -8,6 +8,7 @@ import (
 
 type Config struct {
 	AppName        string `yaml:"app_name"`
+	Host           string `mapstructure:"host"`
 	Port           int    `yaml:"port"`
 	GRPCPort       int    `yaml:"grpcPort"`
 	Db             DB     `mapstructure:"DB"`

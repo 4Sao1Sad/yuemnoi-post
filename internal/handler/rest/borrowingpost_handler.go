@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/bpremika/post/internal/dto"
@@ -22,7 +23,9 @@ func NewBorrowingPostRest(repo repository.BorrowingPostRepository) *BorrowingPos
 }
 
 func (g *BorrowingPostRest) CreateBorrowingPost(c *fiber.Ctx) error {
+	fmt.Println(c.Request().Header)
 	userIdString := c.Get("X-User-Id")
+	fmt.Println(userIdString)
 	if userIdString == "" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "User not authenticated",
@@ -45,6 +48,7 @@ func (g *BorrowingPostRest) CreateBorrowingPost(c *fiber.Ctx) error {
 
 	name, err := util.GetUserById(uint(userId))
 	if err != nil {
+		log.Print("error from get userId", err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "This user not exists",
 		})

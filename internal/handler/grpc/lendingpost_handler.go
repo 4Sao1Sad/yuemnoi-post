@@ -60,6 +60,9 @@ func (g *LendingPostGRPC) GetLendingPostsByIds(ctx context.Context, input *pb.Ge
 	for _, post := range *posts {
 		resp.Posts = append(resp.Posts, &pb.LendingPost{
 			Id:           uint64(post.ID),
+			ItemName:     post.ItemName,
+			Price:        post.Price,
+			ImageUrl:     post.ImageURL,
 			Description:  post.Description,
 			ActiveStatus: post.ActiveStatus,
 			UpdatedAt:    timestamppb.New(post.UpdatedAt),

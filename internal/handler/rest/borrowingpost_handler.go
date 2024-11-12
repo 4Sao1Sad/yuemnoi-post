@@ -23,7 +23,6 @@ func NewBorrowingPostRest(repo repository.BorrowingPostRepository) *BorrowingPos
 }
 
 func (g *BorrowingPostRest) CreateBorrowingPost(c *fiber.Ctx) error {
-	fmt.Println(c.Request().Header)
 	userIdString := c.Get("X-User-Id")
 	fmt.Println(userIdString)
 	if userIdString == "" {

@@ -53,7 +53,7 @@ func (r BorrowingPostRepositoryImpl) GetBorrowingPostsByIds(ids []uint64) (*[]mo
 
 func (r BorrowingPostRepositoryImpl) GetMyBorrowingPosts(userId uint64) (*[]model.BorrowingPost, error) {
 	var posts []model.BorrowingPost
-	err := r.db.Where("owner_id = ?", userId).Find(&posts).Error
+	err := r.db.Where("owner_id = ? AND active_status = ?", userId, true).Find(&posts).Error
 	if err != nil {
 		return nil, err
 	}
